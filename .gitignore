@@ -29,18 +29,6 @@ Thumbs.db
 _minted/
 *data.minted
 
-# 大型实验数据（脚本和 README 保留，原始数据不入 git）
-实验数据/*.csv
-实验数据/*.json
-实验数据/*.jsonl
-实验数据/*.txt
-实验数据/*.log
-实验数据/*.dat
-实验数据/*.npy
-实验数据/*.npz
-实验数据/**/*.csv
-实验数据/**/*.json
-实验数据/**/*.jsonl
-实验数据/**/*.txt
-实验数据/**/*.log
-实验数据/**/*.dat
+# 非作品内容（不在 GitHub 发布）
+论文/
+实验数据/
