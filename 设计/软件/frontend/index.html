@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robot Safety Monitor</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://registry.npmmirror.com/echarts/5.5.0/files/dist/echarts.min.js"></script>
+  <style>
+    :root { --bg: #0a0e14; --panel: #131a24; --border: #1e2d3d; --text: #8b9bb4; --bright: #c8d6e5; --green: #10b981; --yellow: #f59e0b; --red: #ef4444; --blue: #3b82f6; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; }
+    .app { max-width:1400px; margin:0 auto; padding:16px; }
+    .header { display:flex; align-items:center; gap:12px; padding:12px 0 16px; border-bottom:1px solid var(--border); margin-bottom:16px; flex-wrap:wrap; }
+    .header h1 { font-size:20px; color:var(--bright); }
+    .status-badge { padding:6px 14px; border-radius:20px; font-size:13px; font-weight:700; letter-spacing:0.5px; }
+    .status-NOMINAL { background:rgba(16,185,129,0.15); color:var(--green); border:1px solid rgba(16,185,129,0.3); }
+    .status-WARNING  { background:rgba(245,158,11,0.15); color:var(--yellow); border:1px solid rgba(245,158,11,0.3); }
+    .status-CRITICAL { background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.3); animation:pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+    .grid { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-bottom:16px; }
+    .card { background:var(--panel); padding:16px; border-radius:8px; border:1px solid var(--border); border-left:3px solid var(--blue); }
+    .card.warn { border-left-color:var(--yellow); }
+    .card.crit { border-left-color:var(--red); }
+    .card-value { font-size:26px; font-weight:700; color:var(--bright); }
+    .card-label { font-size:11px; color:var(--text); text-transform:uppercase; letter-spacing:0.5px; margin-top:4px; }
+    .panel { background:var(--panel); padding:16px; border-radius:8px; border:1px solid var(--border); margin-bottom:16px; }
+    .panel h2 { font-size:14px; color:var(--bright); margin-bottom:12px; }
+    .row2 { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+    .alert-list { display:flex; flex-direction:column; gap:6px; max-height:300px; overflow-y:auto; }
+    .alert-item { padding:8px 12px; border-radius:6px; font-size:12px; display:flex; gap:8px; align-items:center; }
+    .alert-warning { background:rgba(245,158,11,0.08); border-left:2px solid var(--yellow); }
+    .alert-critical { background:rgba(239,68,68,0.08); border-left:2px solid var(--red); }
+    .alert-badge { padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700; text-transform:uppercase; }
+    .badge-warning { background:rgba(245,158,11,0.2); color:var(--yellow); }
+    .badge-critical { background:rgba(239,68,68,0.2); color:var(--red); }
+    .footer { text-align:center; padding:12px; color:#3a4a5c; font-size:11px; }
+    .ctrl-btn { padding:10px 20px; border-radius:6px; border:1px solid; font-size:14px; font-weight:700;
+      cursor:pointer; transition:all 0.15s; color:white; }
+    .ctrl-fwd { background:#3b82f6; border-color:#2563eb; }
+    .ctrl-turn { background:#8b5cf6; border-color:#7c3aed; }
+    .ctrl-stop { background:#f59e0b; border-color:#d97706; }
+    .ctrl-estop { background:#ef4444; border-color:#dc2626; }
+    .ctrl-btn:hover { filter:brightness(1.2); transform:scale(1.05); }
+    @media(max-width:800px){ .grid{grid-template-columns:repeat(2,1fr)} .row2{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const API = 'http://localhost:8090';
+
+function App() {
+  const [summary, setSummary] = React.useState(null);
+  const [alerts, setAlerts] = React.useState([]);
+  const [jitterHistory, setJitterHistory] = React.useState([]);
+  const [lastCmd, setLastCmd] = React.useState(null);
+  const [cmdStatus, setCmdStatus] = React.useState('');
+
+  React.useEffect(() => {
+    const poll = async () => {
+      try {
+        const [s, a, j] = await Promise.all([
+          fetch(API+'/api/summary'),
+          fetch(API+'/api/alerts'),
+          fetch(API+'/api/jitter_history'),
+        ]);
+        if (s.ok) setSummary(await s.json());
+        if (a.ok) setAlerts(await a.json());
+        if (j.ok) setJitterHistory(await j.json());
+      } catch(e){}
+    };
+    poll();
+    const t = setInterval(poll, 2000);
+    return () => clearInterval(t);
+  }, []);
+
+  if (!summary) return <div className="app"><div className="header"><h1>Robot Safety Monitor</h1></div><p style={{textAlign:'center',padding:40}}>Connecting to collector...</p></div>;
+
+  const status = summary.robot_safety || 'NOMINAL';
+  const hasRobot = summary.robot_yaw !== undefined;
+
+  const sendCommand = async (cmd) => {
+    setLastCmd(cmd);
+    setCmdStatus('sending');
+    try {
+      await fetch(API + '/api/command', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({cmd}),
+      });
+      setCmdStatus('sent');
+      if (!hasRobot) setCmdStatus('sent-no-robot');
+      setTimeout(() => setCmdStatus(''), 2000);
+    } catch(e) {
+      setCmdStatus('error');
+    }
+  };
+
+  return (
+    <div className="app">
+      <header className="header">
+        <h1>eBPF Robot Safety Monitor</h1>
+        <span className={`status-badge status-${status}`}>{status}</span>
+        {summary.robot_estop && <span className="status-badge status-CRITICAL">ESTOP</span>}
+        <span style={{fontSize:12,color:'#546e7a',marginLeft:'auto'}}>
+          eBPF probes active | monitoring system-wide nanosleep
+        </span>
+      </header>
+      {status === 'CRITICAL' && !hasRobot && (
+        <div style={{background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.2)',
+          borderRadius:6,padding:'8px 12px',marginBottom:12,fontSize:12,color:'#fca5a5'}}>
+          CRITICAL status on startup is normal: eBPF loop_monitor captures ALL system nanosleep calls.
+          Without a specific robot process to filter, WSL2 system jitter triggers alerts.
+          Start <code style={{background:'#1a2a3a',padding:'1px 4px',borderRadius:3}}>robot_control.py</code> to monitor a real robot.
+        </div>
+      )}
+
+      <div className="grid">
+        <div className={`card ${summary.loop_criticals > 0 ? 'crit' : summary.loop_warnings > 5 ? 'warn' : ''}`}>
+          <div className="card-value">{summary.last_jitter_us?.toFixed(0) || 0}<span style={{fontSize:14,color:'#546e7a'}}> us</span></div>
+          <div className="card-label">Control Loop Jitter</div>
+        </div>
+        <div className={`card ${summary.serial_stalls > 0 ? 'crit' : ''}`}>
+          <div className="card-value">{summary.serial_stalls || 0}</div>
+          <div className="card-label">Serial Stalls</div>
+        </div>
+        <div className={`card ${summary.max_wait_ms > 10 ? 'warn' : ''}`}>
+          <div className="card-value">{summary.avg_wait_ms?.toFixed(1) || 0}<span style={{fontSize:14,color:'#546e7a'}}> ms</span></div>
+          <div className="card-label">Avg Sched Latency</div>
+        </div>
+        <div className={`card ${status === 'CRITICAL' ? 'crit' : status === 'WARNING' ? 'warn' : ''}`}>
+          <div className="card-value">{alerts.length}</div>
+          <div className="card-label">Active Alerts</div>
+        </div>
+      </div>
+
+      <RobotPanel summary={summary} sendCommand={sendCommand} hasRobot={hasRobot} lastCmd={lastCmd} cmdStatus={cmdStatus} />
+
+      <div className="row2">
+        <div className="panel">
+          <h2>Safety Alerts</h2>
+          <div className="alert-list">
+            {alerts.length === 0 && <p style={{color:'#546e7a',fontSize:13,textAlign:'center',padding:20}}>No alerts — system nominal</p>}
+            {alerts.slice().reverse().slice(0, 20).map((a,i) => (
+              <div key={i} className={`alert-item alert-${a.level}`}>
+                <span className={`alert-badge badge-${a.level}`}>{a.level}</span>
+                <span style={{flex:1}}>{a.message}</span>
+                <span style={{color:'#546e7a',fontSize:11}}>{new Date(a.time).toLocaleTimeString()}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <JitterChart summary={summary} alerts={alerts} jitterHistory={jitterHistory} />
+      </div>
+
+      <div className="footer">
+        eBPF Robot Safety Monitor v1.0 | Monitors: Control Loop Period · Serial Communication · Task Scheduling
+      </div>
+    </div>
+  );
+}
+
+function RobotPanel({ summary, sendCommand, hasRobot, lastCmd, cmdStatus }) {
+  var statusMsg = '';
+  if (cmdStatus === 'sent') statusMsg = 'Command sent to collector';
+  else if (cmdStatus === 'sent-no-robot') statusMsg = 'Sent — start robot_control.py to forward to STM32';
+  else if (cmdStatus === 'sending') statusMsg = 'Sending...';
+  else if (cmdStatus === 'error') statusMsg = 'Error: collector not reachable';
+
+  return (
+    <div className="panel">
+      <h2>Robot Control {!hasRobot && <span style={{fontSize:11,color:'#f59e0b',fontWeight:400}}>(simulation mode)</span>}</h2>
+      <div style={{display:'flex', gap:12, flexWrap:'wrap', alignItems:'center'}}>
+        <button onClick={() => sendCommand('FWD 300')} className="ctrl-btn ctrl-fwd">FWD</button>
+        <button onClick={() => sendCommand('LEFT 250')} className="ctrl-btn ctrl-turn">LEFT</button>
+        <button onClick={() => sendCommand('STOP')} className="ctrl-btn ctrl-stop">STOP</button>
+        <button onClick={() => sendCommand('RIGHT 250')} className="ctrl-btn ctrl-turn">RIGHT</button>
+        <button onClick={() => sendCommand('BACK 300')} className="ctrl-btn ctrl-fwd">BACK</button>
+        <button onClick={() => sendCommand('ESTOP')} className="ctrl-btn ctrl-estop"
+                style={{marginLeft:'auto',background:'#ef4444',borderColor:'#dc2626'}}>
+          EMERGENCY STOP
+        </button>
+      </div>
+      {lastCmd && (
+        <div style={{marginTop:8, fontSize:12, color: cmdStatus === 'sent-no-robot' ? '#f59e0b' : '#10b981'}}>
+          Last: <b>{lastCmd}</b> — {statusMsg}
+        </div>
+      )}
+      {hasRobot ? (
+        <div style={{display:'flex', gap:24, marginTop:12, fontSize:13, color:'#8b9bb4'}}>
+          <span>Yaw: <b style={{color:'#c8d6e5'}}>{summary.robot_yaw?.toFixed(1)}</b> deg</span>
+          <span>Motors: L=<b style={{color:'#c8d6e5'}}>{summary.robot_motor_l}</b> R=<b style={{color:'#c8d6e5'}}>{summary.robot_motor_r}</b></span>
+        </div>
+      ) : (
+        <p style={{color:'#546e7a',fontSize:12,textAlign:'left',padding:'8px 0 0 0'}}>
+          No STM32 connected. Start WSL terminal: <code style={{background:'#1a2a3a',padding:'2px 6px',borderRadius:4}}>python3 ros2/robot_control.py --serial /dev/ttyUSB0</code>
+        </p>
+      )}
+    </div>
+  );
+}
+
+function JitterChart({ summary, alerts, jitterHistory }) {
+  const ref = React.useRef(null);
+  const instRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!ref.current) return;
+    if (!instRef.current) instRef.current = echarts.init(ref.current);
+
+    // Use real jitter data — show only last 60 seconds
+    const now = Date.now();
+    const cutoff = now - 60000; // 60 seconds
+    const data = (jitterHistory || [])
+      .filter(p => p.time > cutoff)
+      .map(p => [p.time, p.jitter]);
+
+    // Alert markers (last 60s only)
+    const markers = alerts
+      .filter(a => a.type === 'loop_jitter' && new Date(a.time).getTime() > cutoff)
+      .map(a => ({
+        coord: [new Date(a.time).getTime(), a.value || 0],
+        symbol: 'pin', symbolSize: 20,
+        itemStyle: { color: a.level === 'critical' ? '#ef4444' : '#f59e0b' },
+      }));
+
+    const warnUs = 500;
+    const critUs = 2000;
+
+    instRef.current.setOption({
+      tooltip: { trigger: 'axis', formatter: params => {
+        const p = params[0];
+        return new Date(p.value[0]).toLocaleTimeString() + '<br/>Jitter: ' + p.value[1].toFixed(0) + ' us';
+      }},
+      grid: { left: 55, right: 20, top: 10, bottom: 30 },
+      xAxis: {
+        type: 'time',
+        axisLabel: { color: '#546e7a' },
+        splitLine: { show: false },
+        min: cutoff,
+        max: now,
+        minInterval: 15000,   // 15-second grid
+        maxInterval: 30000,   // 30-second grid max
+      },
+      yAxis: { type: 'value', name: 'Jitter (us)', axisLabel: { color: '#546e7a' },
+        splitLine: { lineStyle: { color: '#1a2a3a' } } },
+      series: [
+        { name: 'Jitter', type: 'line', smooth: true, showSymbol: false,
+          data: data.length > 0 ? data : [[now - 60000, 0], [now, 0]],
+          lineStyle: { color: '#3b82f6', width: 2 },
+          areaStyle: { color: 'rgba(59,130,246,0.08)' },
+          markLine: { silent: true, symbol: 'none', data: [
+            { yAxis: warnUs, label: { formatter: 'Warn ' + warnUs + 'us', color: '#f59e0b' }, lineStyle: { color: '#f59e0b', type: 'dashed' } },
+            { yAxis: critUs, label: { formatter: 'Crit ' + critUs + 'us', color: '#ef4444' }, lineStyle: { color: '#ef4444', type: 'dashed' } },
+          ]}},
+        ...(markers.length > 0 ? [{ name: 'Alerts', type: 'scatter', data: markers, symbolSize: 15 }] : []),
+      ],
+    }, true);
+
+    const r = () => instRef.current?.resize();
+    window.addEventListener('resize', r);
+    return () => window.removeEventListener('resize', r);
+  }, [summary, alerts, jitterHistory]);
+
+  return <div className="panel"><h2>Control Loop Jitter (Allan-Calibrated)</h2><div ref={ref} style={{width:'100%',height:300}} /></div>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

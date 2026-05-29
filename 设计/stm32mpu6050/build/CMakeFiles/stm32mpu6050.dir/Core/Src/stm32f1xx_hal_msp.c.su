@@ -1,0 +1,7 @@
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/stm32f1xx_hal_msp.c:62:6:HAL_MspInit	8	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/stm32f1xx_hal_msp.c:89:6:HAL_I2C_MspInit	32	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/stm32f1xx_hal_msp.c:124:6:HAL_I2C_MspDeInit	8	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/stm32f1xx_hal_msp.c:155:6:HAL_TIM_Base_MspInit	16	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/stm32f1xx_hal_msp.c:181:6:HAL_TIM_Base_MspDeInit	0	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/stm32f1xx_hal_msp.c:206:6:HAL_UART_MspInit	56	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/stm32f1xx_hal_msp.c:264:6:HAL_UART_MspDeInit	8	static

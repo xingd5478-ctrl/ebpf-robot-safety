@@ -1,0 +1,8 @@
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/portable/MemMang/heap_4.c:173:8:pvPortMalloc	24	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/portable/MemMang/heap_4.c:348:6:vPortFree	24	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/portable/MemMang/heap_4.c:407:8:xPortGetFreeHeapSize	0	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/portable/MemMang/heap_4.c:413:8:xPortGetMinimumEverFreeHeapSize	0	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/portable/MemMang/heap_4.c:419:6:vPortInitialiseBlocks	0	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/portable/MemMang/heap_4.c:425:8:pvPortCalloc	16	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/portable/MemMang/heap_4.c:560:6:vPortGetHeapStats	24	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/portable/MemMang/heap_4.c:617:6:vPortHeapResetState	0	static

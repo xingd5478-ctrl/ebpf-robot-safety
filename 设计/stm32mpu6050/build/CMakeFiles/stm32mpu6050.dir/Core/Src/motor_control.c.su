@@ -1,0 +1,7 @@
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/motor_control.c:25:6:Motor_Init	80	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/motor_control.c:78:6:Motor_Set	16	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/motor_control.c:119:6:Motor_Stop	0	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/motor_control.c:175:6:Motor_EmergencyStop	8	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/motor_control.c:124:6:Motor_ApplyCmd	24	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/motor_control.c:188:6:Motor_Disable	8	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/motor_control.c:194:6:Motor_Enable	8	static

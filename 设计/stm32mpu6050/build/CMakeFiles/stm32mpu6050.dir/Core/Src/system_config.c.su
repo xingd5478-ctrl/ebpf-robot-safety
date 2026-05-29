@@ -1,0 +1,5 @@
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/system_config.c:16:17:calc_crc	72	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/system_config.c:28:6:SysCfg_SetDefaults	8	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/system_config.c:41:5:SysCfg_Validate	80	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/system_config.c:57:6:SysCfg_Load	16	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Core/Src/system_config.c:70:19:SysCfg_Save	96	static

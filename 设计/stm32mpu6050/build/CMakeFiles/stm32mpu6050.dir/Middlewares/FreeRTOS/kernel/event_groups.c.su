@@ -1,0 +1,11 @@
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:145:28:xEventGroupCreate	8	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:312:17:xEventGroupWaitBits	32	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:472:17:xEventGroupClearBits	16	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:524:17:xEventGroupGetBitsFromISR	0	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:547:17:xEventGroupSetBits	24	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:185:17:xEventGroupSync	24	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:647:10:vEventGroupDelete	16	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:745:10:vEventGroupSetBitsCallback	0	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:761:10:vEventGroupClearBitsCallback	0	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:835:21:uxEventGroupGetNumber	0	static
+/home/xingdong/桌面/ebpf-robot-safety/ebpf-robot-safety/ebpf-robot-safety/设计/stm32mpu6050/Middlewares/FreeRTOS/kernel/event_groups.c:865:14:vEventGroupSetNumber	0	static

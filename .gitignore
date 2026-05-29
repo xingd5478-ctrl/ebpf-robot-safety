@@ -1,0 +1,46 @@
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+_minted/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Go
+bin/collector
+
+# BPF
+bpf/*.bpf.o
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+_minted/
+*data.minted
+
+# 大型实验数据（脚本和 README 保留，原始数据不入 git）
+实验数据/*.csv
+实验数据/*.json
+实验数据/*.jsonl
+实验数据/*.txt
+实验数据/*.log
+实验数据/*.dat
+实验数据/*.npy
+实验数据/*.npz
+实验数据/**/*.csv
+实验数据/**/*.json
+实验数据/**/*.jsonl
+实验数据/**/*.txt
+实验数据/**/*.log
+实验数据/**/*.dat
